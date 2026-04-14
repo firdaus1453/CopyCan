@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/firdaus1453/CopyCan/releases/latest"><img src="https://img.shields.io/github/v/release/firdaus1453/CopyCan?style=flat-square&color=blue" alt="Release" /></a>
+  <a href="https://github.com/firdaus1453/CopyCan/releases/latest"><img src="https://img.shields.io/github/v/tag/firdaus1453/CopyCan?style=flat-square&color=blue&label=Release" alt="Release" /></a>
   <img src="https://img.shields.io/badge/platform-macOS-lightgrey?style=flat-square&logo=apple" />
   <img src="https://img.shields.io/badge/language-Swift-orange?style=flat-square&logo=swift" />
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" />
