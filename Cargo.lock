@@ -3,6 +3,21 @@
 version = 4
 
 [[package]]
+name = "CopyCan"
+version = "0.1.0"
+dependencies = [
+ "arboard",
+ "chrono",
+ "dirs",
+ "global-hotkey",
+ "muda",
+ "serde",
+ "serde_json",
+ "tao",
+ "tray-icon",
+]
+
+[[package]]
 name = "adler2"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -182,21 +197,6 @@ dependencies = [
  "num-traits",
  "wasm-bindgen",
  "windows-link 0.2.1",
-]
-
-[[package]]
-name = "clipboard"
-version = "0.1.0"
-dependencies = [
- "arboard",
- "chrono",
- "dirs",
- "global-hotkey",
- "muda",
- "serde",
- "serde_json",
- "tao",
- "tray-icon",
 ]
 
 [[package]]

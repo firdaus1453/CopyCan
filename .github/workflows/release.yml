@@ -1,4 +1,4 @@
-name: Release macOS DMG
+name: Release
 
 on:
   push:
@@ -9,36 +9,100 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  build:
+    name: Build and Release
     runs-on: macos-latest
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@stable
-      
-    - name: Install cargo-bundle
-      run: cargo install cargo-bundle
-      
-    - name: Build Application Bundle
-      run: |
-        cargo bundle --release
-        
-    - name: Install create-dmg
-      run: npm install -g create-dmg
-      
-    - name: Create DMG
-      run: |
-        cd target/release/bundle/osx/
-        create-dmg CopyCan.app || true
-        mv CopyCan*.dmg ../../../../CopyCan.dmg
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin, aarch64-apple-darwin
 
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        files: CopyCan.dmg
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Intel (x86_64)
+        run: cargo build --release --target x86_64-apple-darwin
+
+      - name: Build Apple Silicon (aarch64)
+        run: cargo build --release --target aarch64-apple-darwin
+
+      - name: Create Universal Binary
+        run: |
+          mkdir -p target/universal/release
+          lipo -create \
+            target/x86_64-apple-darwin/release/CopyCan \
+            target/aarch64-apple-darwin/release/CopyCan \
+            -output target/universal/release/CopyCan
+
+      - name: Create .app Bundle
+        run: |
+          APP_NAME="CopyCan"
+          BUNDLE_DIR="${APP_NAME}.app"
+          CONTENTS_DIR="${BUNDLE_DIR}/Contents"
+          MACOS_DIR="${CONTENTS_DIR}/MacOS"
+          RESOURCES_DIR="${CONTENTS_DIR}/Resources"
+
+          mkdir -p "${MACOS_DIR}" "${RESOURCES_DIR}"
+          cp target/universal/release/CopyCan "${MACOS_DIR}/CopyCan"
+          
+          # Copy icon if it exists
+          if [ -f "assets/CopyCan.icns" ]; then
+            cp assets/CopyCan.icns "${RESOURCES_DIR}/CopyCan.icns"
+          fi
+
+          cat > "${CONTENTS_DIR}/Info.plist" << 'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleName</key>
+              <string>CopyCan</string>
+              <key>CFBundleDisplayName</key>
+              <string>CopyCan</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.copycan.app</string>
+              <key>CFBundleVersion</key>
+              <string>${GITHUB_REF_NAME#v}</string>
+              <key>CFBundleShortVersionString</key>
+              <string>${GITHUB_REF_NAME#v}</string>
+              <key>CFBundleExecutable</key>
+              <string>CopyCan</string>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
+              <key>LSMinimumSystemVersion</key>
+              <string>10.15</string>
+              <key>CFBundleIconFile</key>
+              <string>CopyCan</string>
+              <key>LSUIElement</key>
+              <true/>
+              <key>NSHighResolutionCapable</key>
+              <true/>
+          </dict>
+          </plist>
+          PLIST
+
+      - name: Create DMG
+        run: |
+          STAGING_DIR="/tmp/copycan_dmg_staging"
+          rm -rf "${STAGING_DIR}"
+          mkdir -p "${STAGING_DIR}"
+          cp -r CopyCan.app "${STAGING_DIR}/"
+          ln -s /Applications "${STAGING_DIR}/Applications"
+          
+          hdiutil create \
+            -volname "CopyCan" \
+            -srcfolder "${STAGING_DIR}" \
+            -ov \
+            -format UDZO \
+            "CopyCan-${GITHUB_REF_NAME}.dmg"
+          
+          rm -rf "${STAGING_DIR}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            CopyCan-${{ github.ref_name }}.dmg
