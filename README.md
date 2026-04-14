@@ -33,11 +33,11 @@
 
 ## 🚨 The Problem
 
-You're working. You copy something important. You get distracted, copy something else — **and your previous clipboard is gone forever.**
+By default, the macOS clipboard only stores the **most recent** item you copied. If you copy a new piece of text before pasting the old one, your previous data is overwritten and lost. 
 
-macOS only keeps **one** item in the clipboard. There's no undo. There's no history. Just gone.
+While there are many clipboard managers available, a lot of them are heavy applications packed with features you might never need, consuming unnecessary memory.
 
-**CopyCan fixes this.** It silently watches your clipboard in the background and remembers everything you copy — so you never have to worry about losing a copied text ever again.
+**CopyCan is different.** Designed for extreme minimalism, it silently watches your clipboard in the background and remembers up to 50 of your recent clips. It ensures you never lose important copied text, all while using virtually zero system resources.
 
 ## ✨ Features
 
