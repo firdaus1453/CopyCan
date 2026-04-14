@@ -1,6 +1,6 @@
 ---
 
-<img src="assets/icon.png" width="128" align="right" alt="CopyCan icon" style="border-radius:24px"/>
+<img src="assets/screenshot.png" width="300" align="right" alt="CopyCan screenshot" style="border-radius:8px"/>
 
 A lightweight macOS clipboard history manager written in Rust. Automatically remembers your copied text and lets you paste them seamlessly using a global hotkey.
 
@@ -66,34 +66,43 @@ cd CopyCan
 cargo build --release
 
 # Run the application
-./target/release/clipboard
+./target/release/CopyCan
 ```
 
 The app will appear in your macOS menu bar — no window opens.
 
 ### Package as .app Bundle
-To create a native macOS bundle with icons:
 ```bash
-cargo install cargo-bundle
-cargo bundle --release
+chmod +x create_app_bundle.sh
+./create_app_bundle.sh
 ```
 
-This creates `CopyCan.app` inside `target/release/bundle/osx/` which you can:
+This creates `CopyCan.app` which you can:
 - Move to `/Applications/`
 - Double-click to launch
 - Add to Login Items via System Settings
 
-Alternatively, just push a tag `v*` to trigger the GitHub Actions workflow which automatically builds and publishes a `.dmg` release!
+The `.app` bundle has `LSUIElement=true` set, meaning it runs as a menu bar-only app with no Dock icon.
+
+### Package as .dmg for Distribution
+```bash
+chmod +x create_dmg.sh
+./create_dmg.sh
+```
+
+Alternatively, just push a tag `v*` to trigger the GitHub Actions workflow which automatically builds a **Universal Binary** and publishes a `.dmg` release!
 
 ## Project Structure
 ```
 CopyCan/
 ├── Cargo.toml                 # Dependencies and build config
+├── create_app_bundle.sh       # .app bundle packaging script
+├── create_dmg.sh              # DMG packaging script
 ├── README.md                  # This file
 ├── src/
 │   └── main.rs                # Entry point, event loop, clipboard polling, and tray UI
 ├── assets/                    # App icon and screenshots
-└── .github/workflows/         # GitHub Actions CMD release pipeline
+└── .github/workflows/         # GitHub Actions CI/CD pipeline
 ```
 
 ## Dependencies
