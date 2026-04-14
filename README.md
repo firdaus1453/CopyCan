@@ -40,7 +40,7 @@ It automatically remembers the string texts you've copied, saving you from the h
 ### Build From Source
 If you have Rust installed, just clone and build the release:
 ```bash
-git clone https://github.com/your-username/CopyCan.git
+git clone https://github.com/firdaus1453/CopyCan.git
 cd CopyCan
 cargo build --release
 ```
