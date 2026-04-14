@@ -5,6 +5,9 @@ on:
     tags:
       - 'swift-v*' # Trigger just for swift-vX.Y.Z tags
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: macos-latest
