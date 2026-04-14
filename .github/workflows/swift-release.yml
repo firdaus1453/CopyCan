@@ -1,0 +1,70 @@
+name: Swift Universal Release
+
+on:
+  push:
+    tags:
+      - 'swift-v*' # Trigger just for swift-vX.Y.Z tags
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode / Swift
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 'latest-stable'
+
+      - name: Build Universal Binary
+        working-directory: CopyCanSwift
+        run: |
+          swift build -c release --arch arm64 --arch x86_64
+
+      - name: Package into CopyCanSwift.app Bundle
+        working-directory: CopyCanSwift
+        run: |
+          mkdir -p CopyCanSwift.app/Contents/MacOS
+          mkdir -p CopyCanSwift.app/Contents/Resources
+          
+          # Copy universal executable
+          cp .build/apple/Products/Release/CopyCanSwift CopyCanSwift.app/Contents/MacOS/
+          
+          # Create Minimal Application Info.plist (required for menubar items to work properly and hide dock icon)
+          cat <<EOF > CopyCanSwift.app/Contents/Info.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleExecutable</key>
+              <string>CopyCanSwift</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.firdaus.copycanswift</string>
+              <key>CFBundleName</key>
+              <string>CopyCanSwift</string>
+              <key>CFBundleVersion</key>
+              <string>1.0</string>
+              <key>CFBundleShortVersionString</key>
+              <string>1.0</string>
+              <key>LSUIElement</key>
+              <true/>
+              <key>NSHighResolutionCapable</key>
+              <true/>
+          </dict>
+          </plist>
+          EOF
+          
+          # Zip the bundle
+          zip -qr CopyCanSwift-macOS-Universal.zip CopyCanSwift.app
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: CopyCanSwift/CopyCanSwift-macOS-Universal.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
