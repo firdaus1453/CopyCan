@@ -31,13 +31,13 @@
 
 ---
 
-## 🚨 The Problem
+## 💡 Why CopyCan?
 
-By default, the macOS clipboard only stores the **most recent** item you copied. If you copy a new piece of text before pasting the old one, your previous data is overwritten and lost. 
+By default, the macOS clipboard only stores the **most recent** item you copied. If you copy a new piece of text before pasting the old one, your previous data is overwritten. 
 
-While there are many clipboard managers available, a lot of them are heavy applications packed with features you might never need, consuming unnecessary memory.
+While there are many clipboard managers available to fix this, most of them are heavy applications packed with features you might never need, consuming unnecessary system memory.
 
-**CopyCan is different.** Designed for extreme minimalism, it silently watches your clipboard in the background and remembers up to 50 of your recent clips. It ensures you never lose important copied text, all while using virtually zero system resources.
+**CopyCan** takes a different approach. Designed for extreme minimalism, it silently runs in your menu bar and remembers up to 50 of your recent clips. It ensures you never lose important copied text, all while using virtually zero system resources.
 
 ## ✨ Features
 
