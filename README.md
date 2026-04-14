@@ -1,64 +1,117 @@
-<h1 align="center">
-  📋 CopyCan
-</h1>
+---
 
+<img src="assets/icon.png" width="128" align="right" alt="CopyCan icon" style="border-radius:24px"/>
+
+A lightweight macOS clipboard history manager written in Rust. Automatically remembers your copied text and lets you paste them seamlessly using a global hotkey.
+
+Built for modern macOS (Intel & Apple Silicon) running macOS 10.15+.
+
+## ✨ Features
+- ⚡️ **Ultra-Lightweight & Fast** — Written in 100% pure Rust. No Electron, no web views, no heavy frameworks.
+- 🎯 **Popup Shortcut** — Press **`Cmd + Shift + V`** to instantly display your clipboard history exactly at your cursor!
+- 🥶 **Zero Bloat** — Extremely low memory footprint (< 10 MB RAM) running silently in the background.
+- 🖥 **Native macOS Experience** — Integrates seamlessly into the Menu Bar and respects your screen real-estate with absolutely **zero Dock Icon**.
+- 🔒 **Privacy First** — Fully local and offline processing. Your clipboard data never leaves your machine.
+- 💾 **Safe Recovery** — Persists your last 50 clips locally (`~/.clipboard_history.json`), surviving reboots so you never lose your data.
+
+## 📸 Screenshot
 <p align="center">
-  <strong>A lightweight, blazing fast, and native macOS clipboard history manager built with Rust.</strong>
+  <img src="assets/screenshot.png" width="600" alt="CopyCan screenshot" style="border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.1);" />
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/macOS-10.15%2B-lightgrey?style=for-the-badge&logo=apple" />
-  <img src="https://img.shields.io/badge/Language-Rust-orange?style=for-the-badge&logo=rust" />
-  <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" />
-</p>
+## Menu Bar Display
+The application sits quietly in your menu bar. Click to see the detailed dropdown or press `Cmd + Shift + V`.
+
+```text
+━━ Clipboard History ━━
+  [1] Copied text snippet...
+  [2] Another important text...
+  [3] https://github.com/firdaus1453...
+───────────────────────
+✕ Quit
+```
+*Clicking any item immediately copies it to your active clipboard, ready for `Cmd + V`.*
+
+## 📥 Installation (For Regular Users)
+The easiest way to install CopyCan is to download the pre-built `.dmg` file.
+
+1. Go to the [Releases page](https://github.com/firdaus1453/CopyCan/releases/latest) and download `CopyCan.dmg`.
+2. Double-click the downloaded `.dmg` file to open it.
+3. **Drag and drop** the `CopyCan.app` icon into the **Applications** folder shortcut.
+4. Open your Applications folder (or Launchpad).
+5. **Important:** Because this is an indie open-source app, macOS Gatekeeper might block it the first time. To open it safely:
+   - **Right-click** (or Control-click) on `CopyCan.app`.
+   - Select **Open** from the menu.
+   - Click **Open** again on the pop-up warning.
+6. The app will quietly start and appear in your menu bar at the top of the screen!
+*Note: Make sure to give CopyCan **Accessibility Permissions** in System Settings to allow the `Cmd + Shift + V` hotkey to function properly.*
 
 ---
 
-<p align="center">
-  <img src="assets/screenshot.png" alt="CopyCan Screenshot" style="border-radius: 8px; max-width: 600px; width: 100%; box-shadow: 0 4px 14px rgba(0,0,0,0.1);" />
-</p>
+### Prerequisites
+Install Rust (if not already installed):
 
-## What is CopyCan?
-
-**CopyCan** is an extremely lightweight, completely background-running clipboard history manager designed strictly for macOS. It respects your screen real-estate by completely hiding its dock icon and only staying accessible from the top macOS Menu Bar.
-
-It automatically remembers the string texts you've copied, saving you from the horrible tragedy of accidentally replacing your clipboard just before pasting! 
-
-### Features ✨
-* 🪶 **Hyper-Lightweight**: Consumes < 10MB of memory thanks to Rust.
-* 🚀 **Popup Shortcut**: Press **`Cmd + Shift + V`** to display your history exactly at your cursor!
-* 💾 **Persistence Save**: Remembers up to 50 of your recent clips, effortlessly recovering them even after a laptop reboot (`~/.clipboard_history.json`).
-* 👻 **Dock Hidden**: It behaves like a pure system accessory—no annoying active app bounds in your dock.
-
----
-
-## 🛠️ Installation
-
-### Quick Install (.dmg)
-1. Go to the [Releases Setup](#) (Will be automatically filled by Github Actions)
-2. Download the `CopyCan.dmg` file.
-3. Open the `.dmg`, and drag the `CopyCan` app to your `Applications/` folder.
-4. Launch it from Launchpad or Spotlight.
-5. *(Optional)* macOS might prompt you about downloading an unsigned app. Just go to **System Settings > Privacy & Security** and click **Open Anyway**. You may also need to grant it **Accessibility / Input Monitoring** permissions for the `Cmd + Shift + V` shortcut to work effectively!
-
-### Build From Source
-If you have Rust installed, just clone and build the release:
 ```bash
-git clone https://github.com/firdaus1453/CopyCan.git
-cd CopyCan
-cargo build --release
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source "$HOME/.cargo/env"
 ```
 
----
+### Build & Run
+```bash
+# Clone or navigate to the project
+git clone https://github.com/firdaus1453/CopyCan.git
+cd CopyCan
 
-## 🚀 How To Use
+# Build release binary
+cargo build --release
 
-1. Run the app contextually. A `📋` icon will appear in your top right Menu Bar.
-2. Copy some text: `Cmd + C` (as normal).
-3. Need an older clip? Either click the menu icon or press **`Cmd + Shift + V`**.
-4. Click the desired text in the dropdown, and then execute **`Cmd + V`** to paste it seamlessly!
+# Run the application
+./target/release/clipboard
+```
 
-## Contribute
-As CopyCan is open-sourced under the MIT license, you are welcome to fix bugs, add new native interactions, or bundle new cross-platform targets!
+The app will appear in your macOS menu bar — no window opens.
 
-*(Built with 🩵)*
+### Package as .app Bundle
+To create a native macOS bundle with icons:
+```bash
+cargo install cargo-bundle
+cargo bundle --release
+```
+
+This creates `CopyCan.app` inside `target/release/bundle/osx/` which you can:
+- Move to `/Applications/`
+- Double-click to launch
+- Add to Login Items via System Settings
+
+Alternatively, just push a tag `v*` to trigger the GitHub Actions workflow which automatically builds and publishes a `.dmg` release!
+
+## Project Structure
+```
+CopyCan/
+├── Cargo.toml                 # Dependencies and build config
+├── README.md                  # This file
+├── src/
+│   └── main.rs                # Entry point, event loop, clipboard polling, and tray UI
+├── assets/                    # App icon and screenshots
+└── .github/workflows/         # GitHub Actions CMD release pipeline
+```
+
+## Dependencies
+| Crate | Purpose |
+|---|---|
+| `tray-icon` & `muda` | macOS NSMenu and StatusItem integration |
+| `arboard` | Cross-platform clipboard reading/writing |
+| `global-hotkey` | Native global keyboard accelerators |
+| `tao` | Headless event loop (`ActivationPolicy::Accessory`) |
+| `serde` & `serde_json` | JSON persistence configuration |
+
+No async runtime, no heavy frameworks.
+
+## Performance
+| Metric | Value |
+|---|---|
+| Refresh interval | 500 ms polling |
+| Memory usage | < 10 MB |
+
+## License
+MIT
