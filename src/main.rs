@@ -1,19 +1,17 @@
 #![allow(unused)]
 
 use arboard::Clipboard;
-use chrono::Utc;
 use global_hotkey::{
     hotkey::{Code, HotKey, Modifiers},
     GlobalHotKeyEvent, GlobalHotKeyManager,
 };
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::{Arc, Mutex};
 use std::thread;
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 use tao::event::{Event, WindowEvent};
 use tao::event_loop::{ControlFlow, EventLoopBuilder};
@@ -28,10 +26,10 @@ use tray_icon::{
 
 const MAX_HISTORY: usize = 50;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Clone)]
 struct HistoryEntry {
     text: String,
-    timestamp: i64,
+    timestamp: u64,
 }
 
 struct AppState {
@@ -57,26 +55,47 @@ impl AppState {
 }
 
 fn get_data_path() -> PathBuf {
-    let mut path = dirs::home_dir().unwrap_or_else(|| PathBuf::from("."));
-    path.push(".clipboard_history.json");
+    let mut path = std::env::var("HOME").map(PathBuf::from).unwrap_or_else(|_| PathBuf::from("."));
+    path.push(".clipboard_history.txt");
     path
 }
 
 fn load_history() -> Vec<HistoryEntry> {
     let path = get_data_path();
+    let mut entries = Vec::new();
     if let Ok(data) = fs::read_to_string(&path) {
-        if let Ok(entries) = serde_json::from_str(&data) {
-            return entries;
+        let mut cursor = 0;
+        while cursor < data.len() {
+            let Some(ts_end) = data[cursor..].find('\n') else { break; };
+            let ts_str = &data[cursor..cursor + ts_end];
+            cursor += ts_end + 1;
+            
+            let Some(len_end) = data[cursor..].find('\n') else { break; };
+            let len_str = &data[cursor..cursor + len_end];
+            cursor += len_end + 1;
+            
+            if let (Ok(ts), Ok(len)) = (ts_str.parse::<u64>(), len_str.parse::<usize>()) {
+                if cursor + len <= data.len() {
+                    let text = data[cursor..cursor + len].to_string();
+                    cursor += len;
+                    if cursor < data.len() && data[cursor..].starts_with('\n') {
+                        cursor += 1;
+                    }
+                    entries.push(HistoryEntry { text, timestamp: ts });
+                } else { break; }
+            } else { break; }
         }
     }
-    Vec::new()
+    entries
 }
 
 fn save_history(entries: &[HistoryEntry]) {
     let path = get_data_path();
-    if let Ok(json) = serde_json::to_string_pretty(entries) {
-        let _ = fs::write(path, json);
+    let mut out = String::new();
+    for e in entries {
+        out.push_str(&format!("{}\n{}\n{}\n", e.timestamp, e.text.len(), e.text));
     }
+    let _ = fs::write(path, out);
 }
 
 enum CustomEvent {
@@ -221,7 +240,7 @@ fn main() {
                 app_state.entries.retain(|e| e.text != new_text); // remove duplicates
                 app_state.entries.insert(0, HistoryEntry {
                     text: new_text.clone(),
-                    timestamp: Utc::now().timestamp(),
+                    timestamp: SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(),
                 });
                 app_state.entries.truncate(MAX_HISTORY);
                 
@@ -260,7 +279,7 @@ fn main() {
                     app_state.entries.retain(|e| e.text != selected_text); // remove duplicates
                     app_state.entries.insert(0, HistoryEntry {
                         text: selected_text.clone(),
-                        timestamp: Utc::now().timestamp(),
+                        timestamp: SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(),
                     });
                     save_history(&app_state.entries);
                     
