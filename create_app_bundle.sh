@@ -17,8 +17,7 @@ MACOS_DIR="${CONTENTS_DIR}/MacOS"
 RESOURCES_DIR="${CONTENTS_DIR}/Resources"
 
 echo "Building release binary..."
-source "$HOME/.cargo/env" 2>/dev/null || true
-cargo build --release
+swift build -c release --arch arm64 --arch x86_64
 
 echo "Creating app bundle: ${BUNDLE_DIR}"
 rm -rf "${BUNDLE_DIR}"
@@ -26,7 +25,7 @@ mkdir -p "${MACOS_DIR}"
 mkdir -p "${RESOURCES_DIR}"
 
 # Copy binary
-cp "target/release/CopyCan" "${MACOS_DIR}/${APP_NAME}"
+cp ".build/apple/Products/Release/CopyCanSwift" "${MACOS_DIR}/${APP_NAME}"
 
 # Copy icon
 if [ -f "assets/CopyCan.icns" ]; then
