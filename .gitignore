@@ -1,3 +1,6 @@
-/target
+.build/
+.swiftpm/
+*.xcodeproj
+.DS_Store
 *.dmg
 *.app

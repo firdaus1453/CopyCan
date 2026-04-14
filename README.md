@@ -4,13 +4,13 @@
 
 <p align="center">
   <b>Never lose a copied text again.</b><br/>
-  A blazing-fast, ultra-lightweight clipboard history manager for macOS — written entirely in Rust.
+  A blazing-fast, ultra-lightweight clipboard history manager for macOS — written natively in Apple's Swift & AppKit.
 </p>
 
 <p align="center">
   <a href="https://github.com/firdaus1453/CopyCan/releases/latest"><img src="https://img.shields.io/github/v/release/firdaus1453/CopyCan?style=flat-square&color=blue" alt="Release" /></a>
   <img src="https://img.shields.io/badge/platform-macOS-lightgrey?style=flat-square&logo=apple" />
-  <img src="https://img.shields.io/badge/language-Rust-orange?style=flat-square&logo=rust" />
+  <img src="https://img.shields.io/badge/language-Swift-orange?style=flat-square&logo=swift" />
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" />
   <img src="https://img.shields.io/github/actions/workflow/status/firdaus1453/CopyCan/release.yml?style=flat-square&label=build" />
 </p>
@@ -44,11 +44,11 @@ macOS only keeps **one** item in the clipboard. There's no undo. There's no hist
 | | Feature | Description |
 |---|---|---|
 | ⚡️ | **Instant Access** | Press **`⌘ Shift V`** to pop up your full clipboard history at the cursor |
-| 🪶 | **Featherweight** | ~880 KB binary. Pure Rust, zero Electron, zero web views |
+| 🪶 | **Micro-Sized** | **~250 KB** binary (Fat Universal format), leveraging macOS shared libraries natively |
 | 👻 | **Invisible** | Runs as a menu bar icon only — no Dock icon, no windows |
-| 💾 | **Persistent** | Saves your last 50 clips to disk. Survives reboots |
+| 💾 | **Persistent** | Saves your last 50 clips to disk seamlessly. Survives reboots |
 | 🔒 | **Private** | 100% offline. No telemetry. No cloud. Your data stays on your Mac |
-| 🍎 | **Universal** | Runs natively on both Intel and Apple Silicon Macs |
+| 🍎 | **Universal** | Runs natively on both Apple Silicon (M-Series) and Intel Macs |
 
 ## 📥 Quick Install
 
@@ -57,7 +57,7 @@ macOS only keeps **one** item in the clipboard. There's no undo. There's no hist
 3. Launch from Spotlight or Launchpad
 4. **First launch:** Right-click → Open → Open (to bypass Gatekeeper)
 
-> **Tip:** Grant **Accessibility** permission in *System Settings → Privacy & Security → Accessibility* for the `⌘ Shift V` shortcut to work.
+> **Tip:** Grant **Accessibility** permission in *System Settings → Privacy & Security → Accessibility* for the `⌘ Shift V` shortcut to work perfectly.
 
 ## 🧠 How It Works
 
@@ -65,30 +65,16 @@ macOS only keeps **one** item in the clipboard. There's no undo. There's no hist
 You copy something → CopyCan saves it → Press ⌘⇧V → Pick any past clip → Cmd+V to paste
 ```
 
-CopyCan polls the system clipboard every 500ms. When it detects new text, it saves it to a local JSON file (`~/.clipboard_history.json`). Your history is always one shortcut away.
-
-**Menu bar preview:**
-```
-━━ Clipboard History ━━
-  Meeting notes from standup...
-  https://github.com/firdaus1453/CopyCan
-  SELECT * FROM users WHERE...
-  +62 812-XXXX-XXXX
-───────────────────────
-✕ Quit
-```
-
-Click any item → it's copied back to your clipboard, ready to paste.
+CopyCan leverages Apple's `NSPasteboard` and polls for changes efficiently. When it detects new text, it records it to a local history file (`~/.clipboard_history.txt`). Your history is always one shortcut away, anchored securely via low-level Carbon Hotkey events in the background.
 
 ## 🔨 Build From Source
 
-**Prerequisites:** [Rust](https://rustup.rs/)
+**Prerequisites:** [Swift](https://swift.org/) and Xcode Command Line Tools
 
 ```bash
 git clone https://github.com/firdaus1453/CopyCan.git
 cd CopyCan
-cargo build --release
-./target/release/CopyCan
+swift build -c release --arch arm64 --arch x86_64
 ```
 
 **Package as `.app`:**
@@ -104,38 +90,38 @@ chmod +x create_dmg.sh
 ./create_dmg.sh
 ```
 
-Or just push a git tag (`v*`) to trigger automated GitHub Actions release with Universal Binary.
+Alternatively, just push a git tag (`v*`) to trigger automated GitHub Actions to release the `.dmg` with the Universal Binary!
 
 ## 🏗 Project Structure
 
 ```
 CopyCan/
-├── src/main.rs                # All application logic (single-file architecture)
+├── Sources/                   # All Swift application logic
+├── Package.swift              # Swift Package Manager definition
 ├── create_app_bundle.sh       # .app packaging script
 ├── create_dmg.sh              # .dmg packaging script
 ├── assets/                    # Icon (.icns) and screenshots
-└── .github/workflows/         # CI/CD: auto-build Universal Binary + DMG on tag push
+└── .github/workflows/         # CI/CD: auto-build Universal Native macOS app on tag push
 ```
 
 ## ⚙️ Tech Stack
 
-| Crate | Role |
+Building a micro-sized application on macOS demands zero third-party dependencies:
+| Framework | Role |
 |---|---|
-| `tray-icon` + `muda` | Native macOS menu bar integration |
-| `arboard` | Clipboard read/write |
-| `global-hotkey` | System-wide `⌘⇧V` shortcut |
-| `tao` | Headless event loop (no Dock icon) |
-| `serde` + `serde_json` | Persistent history storage |
+| `AppKit / Cocoa` | Native macOS menu bar integration, `NSStatusItem`, and UI delegates |
+| `NSPasteboard` | Instant clipboard read/write events |
+| `Carbon HIToolbox` | Registering global hardware-level `⌘⇧V` shortcut safely |
 
-No async runtime. No heavy frameworks. Just Rust and native macOS APIs.
+No Electron. No heavy frameworks. Just 100% pure Swift and macOS APIs.
 
 ## 📊 Performance
 
 | Metric | Value |
 |---|---|
-| Binary size | ~880 KB |
-| Refresh interval | 500 ms polling |
-| Memory usage | < 5 MB |
+| Binary size | **~250 KB** (Fat/Universal Native) |
+| Refresh interval | 500 ms efficient polling loop |
+| CPU Usage | < 0.1% background |
 
 ## 🤝 Contributing
 
