@@ -1,0 +1,24 @@
+[package]
+name = "CopyCan"
+version = "0.1.0"
+edition = "2024"
+
+[package.metadata.bundle]
+name = "CopyCan"
+identifier = "com.copycan.app"
+icon = ["icon.icns"]
+version = "0.1.0"
+copyright = "Copyright (c) 2026. All rights reserved."
+category = "Productivity"
+short_description = "A lightweight macOS clipboard history manager"
+
+[dependencies]
+arboard = "3.6.1"
+chrono = "0.4.44"
+dirs = "6.0.0"
+global-hotkey = "0.7.0"
+muda = "0.17.2"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+tao = "0.35.0"
+tray-icon = "0.22.0"

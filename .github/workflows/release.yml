@@ -1,0 +1,41 @@
+name: Release macOS DMG
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      
+    - name: Install cargo-bundle
+      run: cargo install cargo-bundle
+      
+    - name: Build Application Bundle
+      run: |
+        cargo bundle --release
+        
+    - name: Install create-dmg
+      run: npm install -g create-dmg
+      
+    - name: Create DMG
+      run: |
+        cd target/release/bundle/osx/
+        create-dmg CopyCan.app || true
+        mv CopyCan*.dmg ../../../../CopyCan.dmg
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: CopyCan.dmg
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
