@@ -14,6 +14,10 @@
 
 ---
 
+<p align="center">
+  <img src="assets/screenshot.png" alt="CopyCan Screenshot" style="border-radius: 8px; max-width: 600px; width: 100%; box-shadow: 0 4px 14px rgba(0,0,0,0.1);" />
+</p>
+
 ## What is CopyCan?
 
 **CopyCan** is an extremely lightweight, completely background-running clipboard history manager designed strictly for macOS. It respects your screen real-estate by completely hiding its dock icon and only staying accessible from the top macOS Menu Bar.
