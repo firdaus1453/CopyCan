@@ -44,7 +44,7 @@ macOS only keeps **one** item in the clipboard. There's no undo. There's no hist
 | | Feature | Description |
 |---|---|---|
 | ⚡️ | **Instant Access** | Press **`⌘ Shift V`** to pop up your full clipboard history at the cursor |
-| 🪶 | **Featherweight** | < 10 MB RAM. Pure Rust, zero Electron, zero web views |
+| 🪶 | **Featherweight** | ~880 KB binary. Pure Rust, zero Electron, zero web views |
 | 👻 | **Invisible** | Runs as a menu bar icon only — no Dock icon, no windows |
 | 💾 | **Persistent** | Saves your last 50 clips to disk. Survives reboots |
 | 🔒 | **Private** | 100% offline. No telemetry. No cloud. Your data stays on your Mac |
@@ -128,6 +128,14 @@ CopyCan/
 | `serde` + `serde_json` | Persistent history storage |
 
 No async runtime. No heavy frameworks. Just Rust and native macOS APIs.
+
+## 📊 Performance
+
+| Metric | Value |
+|---|---|
+| Binary size | ~880 KB |
+| Refresh interval | 500 ms polling |
+| Memory usage | < 5 MB |
 
 ## 🤝 Contributing
 
