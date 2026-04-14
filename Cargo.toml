@@ -2,15 +2,8 @@
 name = "CopyCan"
 version = "0.1.0"
 edition = "2024"
-
-[package.metadata.bundle]
-name = "CopyCan"
-identifier = "com.copycan.app"
-icon = ["icon.icns"]
-version = "0.1.0"
-copyright = "Copyright (c) 2026. All rights reserved."
-category = "Productivity"
-short_description = "A lightweight macOS clipboard history manager"
+description = "A lightweight macOS clipboard history manager"
+authors = ["Muhammad Firdaus"]
 
 [dependencies]
 arboard = "3.6.1"
