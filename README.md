@@ -52,7 +52,7 @@ macOS only keeps **one** item in the clipboard. There's no undo. There's no hist
 
 ## 📥 Quick Install
 
-1. Download **`CopyCan.dmg`** from the [latest release](https://github.com/firdaus1453/CopyCan/releases/latest)
+1. Download **`CopyCan-v*.dmg`** (e.g. `CopyCan-v2.0.0.dmg`) from the [latest release](https://github.com/firdaus1453/CopyCan/releases/latest)
 2. Open the `.dmg` and drag `CopyCan.app` → `Applications`
 3. Launch from Spotlight or Launchpad
 4. **First launch:** Right-click → Open → Open (to bypass Gatekeeper)
@@ -96,7 +96,7 @@ Alternatively, just push a git tag (`v*`) to trigger automated GitHub Actions to
 
 ```
 CopyCan/
-├── Sources/                   # All Swift application logic
+├── Sources/CopyCanSwift/      # All Swift application logic (main.swift)
 ├── Package.swift              # Swift Package Manager definition
 ├── create_app_bundle.sh       # .app packaging script
 ├── create_dmg.sh              # .dmg packaging script
